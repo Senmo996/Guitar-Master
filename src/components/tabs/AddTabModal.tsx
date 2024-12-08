@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { NewSong } from '../../types';
 
@@ -9,14 +9,24 @@ interface AddTabModalProps {
 }
 
 export const AddTabModal: React.FC<AddTabModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState<NewSong>({
+  const defaultFormData: NewSong = {
     title: '',
     artist: '',
     difficulty: 'beginner',
+    specialTuning: 'EADGBE',
     sheetMusicImages: [],
     tabContent: '',
     totalPracticeTime: 0,
-  });
+  };
+
+  const [formData, setFormData] = useState<NewSong>(defaultFormData);
+
+  // Reset form when modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(defaultFormData);
+    }
+  }, [isOpen]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -67,6 +77,10 @@ export const AddTabModal: React.FC<AddTabModalProps> = ({ isOpen, onClose, onSub
     onClose();
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -102,18 +116,36 @@ export const AddTabModal: React.FC<AddTabModalProps> = ({ isOpen, onClose, onSub
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">难度</label>
+          <div className="mb-4">
+            <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700">
+              难度
+            </label>
             <select
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              id="difficulty"
+              name="difficulty"
               value={formData.difficulty}
-              onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as NewSong['difficulty'] })}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             >
               <option value="beginner">初级</option>
               <option value="intermediate">中级</option>
               <option value="advanced">高级</option>
             </select>
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="specialTuning" className="block text-sm font-medium text-gray-700">
+              特殊调弦（可选）
+            </label>
+            <input
+              type="text"
+              id="specialTuning"
+              name="specialTuning"
+              value={formData.specialTuning || ''}
+              onChange={handleInputChange}
+              placeholder="e.g., Drop D, DADGAD"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
           </div>
 
           <div>

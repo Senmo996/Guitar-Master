@@ -20,7 +20,7 @@ export const SongCard: React.FC<SongCardProps> = ({ song, onView, onDelete }) =>
       <div className="p-4">
         <h3 className="text-lg font-semibold">{song.title}</h3>
         <p className="text-gray-600">{song.artist}</p>
-        <div className="mt-2">
+        <div className="mt-2 space-x-2">
           <span className={`inline-block px-2 py-1 rounded text-sm ${
             song.difficulty === 'beginner' ? 'bg-green-100 text-green-800' :
             song.difficulty === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
@@ -28,6 +28,11 @@ export const SongCard: React.FC<SongCardProps> = ({ song, onView, onDelete }) =>
           }`}>
             {difficultyText[song.difficulty]}
           </span>
+          {song.specialTuning && (
+            <span className="inline-block px-2 py-1 rounded text-sm bg-blue-100 text-blue-800">
+              调弦: {song.specialTuning}
+            </span>
+          )}
         </div>
         <div className="mt-4 flex space-x-2">
           <button 

@@ -13,8 +13,9 @@ function App() {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [songs, setSongs] = useState<Song[]>([]);
   const [filter, setFilter] = useState<TabFilter>({
-    searchTerm: '',
-    sortBy: 'lastPlayed'
+    searchQuery: '',
+    sortBy: 'lastPlayed',
+    specialTuning: ''
   });
 
   useEffect(() => {
@@ -83,8 +84,8 @@ function App() {
   const filteredSongs = React.useMemo(() => {
     let result = [...songs];
 
-    if (filter.searchTerm) {
-      const query = filter.searchTerm.toLowerCase();
+    if (filter.searchQuery) {
+      const query = filter.searchQuery.toLowerCase();
       result = result.filter(
         song => 
           song.title.toLowerCase().includes(query) ||
@@ -96,13 +97,22 @@ function App() {
       result = result.filter(song => song.difficulty === filter.difficulty);
     }
 
+    if (filter.specialTuning) {
+      result = result.filter(song => song.specialTuning === filter.specialTuning);
+    }
+
     result.sort((a, b) => {
       switch (filter.sortBy) {
-        case 'dateAdded':
-          return b.dateAdded.getTime() - a.dateAdded.getTime();
-        case 'lastPlayed':
-          if (!a.lastPlayed || !b.lastPlayed) return 0;
-          return b.lastPlayed.getTime() - a.lastPlayed.getTime();
+        case 'dateAdded': {
+          const dateA = a.dateAdded instanceof Date ? a.dateAdded : new Date(a.dateAdded);
+          const dateB = b.dateAdded instanceof Date ? b.dateAdded : new Date(b.dateAdded);
+          return dateB.getTime() - dateA.getTime();
+        }
+        case 'lastPlayed': {
+          const dateA = a.lastPlayed ? (a.lastPlayed instanceof Date ? a.lastPlayed : new Date(a.lastPlayed)) : new Date(0);
+          const dateB = b.lastPlayed ? (b.lastPlayed instanceof Date ? b.lastPlayed : new Date(b.lastPlayed)) : new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        }
         case 'title':
           return a.title.localeCompare(b.title);
         default:
@@ -143,7 +153,9 @@ function App() {
           </button>
         </div>
 
-        {filteredSongs.length > 0 ? (
+        {songs.length === 0 ? (
+          <EmptyState onAddTab={() => setIsModalOpen(true)} />
+        ) : (
           <TabList
             songs={filteredSongs}
             filter={filter}
@@ -151,8 +163,6 @@ function App() {
             onViewTab={handleViewTab}
             onDeleteTab={handleDeleteSong}
           />
-        ) : (
-          <EmptyState onAddTab={() => setIsModalOpen(true)} />
         )}
 
         <AddTabModal

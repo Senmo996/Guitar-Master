@@ -3,6 +3,7 @@ export interface Song {
   title: string;
   artist: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  specialTuning?: string;
   thumbnailUrl?: string;
   sheetMusicImages: string[]; // Array of base64 encoded sheet music images
   tabContent?: string;
@@ -25,6 +26,7 @@ export interface TunerNote {
 export interface TabFilter {
   searchQuery?: string;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  specialTuning?: string;
   sortBy: 'dateAdded' | 'lastPlayed' | 'title';
 }
 
@@ -32,6 +34,7 @@ export interface NewSong {
   title: string;
   artist: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  specialTuning?: string;
   thumbnailUrl?: string;
   sheetMusicImages: string[]; // Array of base64 encoded sheet music images
   tabContent?: string;

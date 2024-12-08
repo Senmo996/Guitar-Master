@@ -16,7 +16,7 @@ interface TabViewerPageProps {
 
 export const TabViewerPage: React.FC<TabViewerPageProps> = ({ song, onBack }) => {
   const [columns, setColumns] = useState(1);
-  const [imageScale, setImageScale] = useState(100);
+  const [imageScale, setImageScale] = useState(60);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(0.5);
   const [currentSessionTime, setCurrentSessionTime] = useState(0);
@@ -132,8 +132,8 @@ export const TabViewerPage: React.FC<TabViewerPageProps> = ({ song, onBack }) =>
     <div className="min-h-screen bg-gray-100">
       <div className="fixed top-0 left-0 right-0 z-10 bg-white shadow">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+          <div className="grid grid-cols-3 items-center">
+            <div className="flex items-center">
               <button
                 onClick={handleBack}
                 className="flex items-center text-gray-600 hover:text-gray-900"
@@ -141,12 +141,12 @@ export const TabViewerPage: React.FC<TabViewerPageProps> = ({ song, onBack }) =>
                 <ArrowLeft size={24} className="mr-2" />
                 返回谱库
               </button>
-              <div>
-                <h1 className="text-2xl font-bold">{song.title}</h1>
-                <p className="text-gray-600">{song.artist}</p>
-              </div>
             </div>
-            <div className="flex items-center space-x-6">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold">{song.title}</h1>
+              <p className="text-gray-600">{song.artist}</p>
+            </div>
+            <div className="flex items-center justify-end space-x-6">
               <div className="flex items-center space-x-2">
                 <Clock size={20} className="text-gray-500" />
                 <div className="flex flex-col">

@@ -23,6 +23,16 @@ export const TabList: React.FC<TabListProps> = ({ songs, filter, onFilterChange,
     return difficultyText[difficulty as keyof typeof difficultyText];
   };
 
+  const uniqueTunings = React.useMemo(() => {
+    const tunings = new Set<string>();
+    songs.forEach(song => {
+      if (song.specialTuning) {
+        tunings.add(song.specialTuning);
+      }
+    });
+    return Array.from(tunings);
+  }, [songs]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4">
@@ -50,6 +60,23 @@ export const TabList: React.FC<TabListProps> = ({ songs, filter, onFilterChange,
             <option value="intermediate">中级</option>
             <option value="advanced">高级</option>
           </select>
+
+          <select
+            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            value={filter.specialTuning || ''}
+            onChange={(e) => onFilterChange({ ...filter, specialTuning: e.target.value || undefined })}
+          >
+            <option value="">所有调弦</option>
+            <option value="EADGBE">标准调弦 (EADGBE)</option>
+            {uniqueTunings
+              .filter(tuning => tuning !== 'EADGBE')
+              .map(tuning => (
+                <option key={tuning} value={tuning}>
+                  {tuning}
+                </option>
+              ))}
+          </select>
+
           <select
             className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             value={filter.sortBy}
@@ -66,14 +93,20 @@ export const TabList: React.FC<TabListProps> = ({ songs, filter, onFilterChange,
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {songs.map((song) => (
-          <SongCard
-            key={song.id}
-            song={song}
-            onView={() => onViewTab(song)}
-            onDelete={() => onDeleteTab(song.id)}
-          />
-        ))}
+        {songs.length === 0 ? (
+          <div className="col-span-full text-center py-8">
+            <p className="text-gray-500">没有找到匹配的谱子</p>
+          </div>
+        ) : (
+          songs.map((song) => (
+            <SongCard
+              key={song.id}
+              song={song}
+              onView={() => onViewTab(song)}
+              onDelete={() => onDeleteTab(song.id)}
+            />
+          ))
+        )}
       </div>
     </div>
   );
